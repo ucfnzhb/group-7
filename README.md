@@ -7,9 +7,7 @@
 <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <link href="https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css" rel="stylesheet" />
-<style>
-	body { margin: 0; padding: 0; }
-	
+<style>	
 <html>
 <head>    
 <meta charset="utf-8" />
