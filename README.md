@@ -26,12 +26,12 @@
 </head>
 <body>
 <div id="map" style="position: absolute; top:0; bottom: 0; width: 100%"></div>
-<div id="ea" style="position: absolute; top:0px;width: 290px; height: 155px; margin: 5; opacity:0.8 "></div>
-<div id="sa" style=" position: absolute; top: 160px;width: 290px; height:155px; margin: 5; opacity:0.8 "></div>
-<div id="eu" style=" position: absolute; top: 320px; width: 290px; height: 155px; margin: 5; opacity:0.8 "></div>
-<div id="mix" style="position: absolute; top: 480px; width: 290px; height: 155px; margin: 5; opacity:0.8 "></div>
-<div id="show" style="position: absolute;top:0; width:25%; height:48%; margin: 5; opacity:0.8; margin-left: 74.7%"></div>
-<div id="rank" style="position: absolute;top:50%; width:25%; height:48%; margin: 5; opacity:0.8; margin-left: 74.7%"></div>  
+<div id="ea" style="position: absolute; top:0px;width: 290px; height: 150px; margin: 5; opacity:0.8 "></div>
+<div id="sa" style=" position: absolute; top: 160px;width: 290px; height:150px; margin: 5; opacity:0.8 "></div>
+<div id="eu" style=" position: absolute; top: 320px; width: 290px; height: 150px; margin: 5; opacity:0.8 "></div>
+<div id="mix" style="position: absolute; top: 480px; width: 290px; height: 150px; margin: 5; opacity:0.8 "></div>
+<div id="show" style="position: absolute;top:0; width:25%; height: 310px; margin: 5; opacity:0.8; margin-left: 1020px"></div>
+<div id="rank" style="position: absolute;top:50%; width:25%; height:310px; margin: 5; opacity:0.8; margin-left: 1020px"></div> 
 
 <script>
    
