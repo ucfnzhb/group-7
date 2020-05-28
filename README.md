@@ -15,12 +15,13 @@
 </head>
 <body>
 <div id="map" style="position: absolute; top:0; bottom: 0; width: 100%"></div>
-<div id="ea" style=" width:21%; height:24%; margin: 5; opacity:0.8 "></div>
-<div id="sa" style=" top=25%;width:21%; height:24%; margin: 5; opacity:0.8 "></div>
-<div id="eu" style=" width:21%; height:24%; margin: 5; opacity:0.8 "></div>
-<div id="mix" style="width:21%; height:24%; margin: 5; opacity:0.8 "></div>
+<div id="ea" style=" position: absolute; width:21%; height:24%; margin: 5; opacity:0.8 "></div>
+<div id="sa" style=" position: absolute;top=25%;width:21%; height:24%; margin: 5; opacity:0.8 "></div>
+<div id="eu" style=" position: absolute;width:21%; height:24%; margin: 5; opacity:0.8 "></div>
+<div id="mix" style="position: absolute;width:21%; height:24%; margin: 5; opacity:0.8 "></div>
 <div id="show" style="position: absolute;top:0; width:25%; height:48%; margin: 5; opacity:0.8; margin-left: 74.7%"></div>
 <div id="rank" style="position: absolute;top:50%; width:25%; height:48%; margin: 5; opacity:0.8; margin-left: 74.7%"></div>  
+
 <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoiamFuZXhpenp6enoiLCJhIjoiY2s5d3k2eWd1MDlxbDNpcDNhOWVwYm5hOSJ9.-bRRt6ezlyK0YcqlD5epMg';
     //get the map backgrount
