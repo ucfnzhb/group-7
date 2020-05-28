@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Geolocation</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+       /*Set height*/
+        #map {
+            height: 100%;
+        }
+
+        /*Set height and margin*/
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+
+    </style>
+</head>
+<body>
+    <!--In order to read JSON data, reference jquery library,-->
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <!--This is the div where the map is placed-->
+    <div id="map"></div>
+    
+    <!--This is cited from Google Maps Platform, the link: https://developers.google.com/maps/documentation/javascript/heatmaplayer-->
+    <!--This is the Google Map script, which contains the API Key-->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJW4jsPlNKgv6jFm3B5Edp5ywgdqLWdmc&sensor=false&language=en&callback=initMap&libraries=visualization"></script>
+
+    <script>
+        //Define the map
+        var map;
+        //This is the initialization function of the map
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 51.50, lng: 0.01 },//This is the original latitude and longitude
+                zoom: 12//This is the default zoom ratio of the map
+            }); 
+
+            //Read the JSON file
+            $.getJSON("contour_WGS84.geo.json", function (d) {
+                draw_heatmap(d);//Draw the heat map
+            })
+
+               //Read the JSON file
+            $.getJSON("contour_britishnationalgrid.geo.json", function (d) {
+                draw_heatmap(d);//Draw the heat map
+            })
+
+            //This is a function of drawing the heat map
+            function draw_heatmap(results) {
+                
+                //This is cited from Google Maps Platform, the link: https://developers.google.com/maps/documentation/javascript/heatmaplayer
+                //This is an array of google.maps.LatLng objects
+                var heatmapData = [];
+                for (var i = 0; i < results.features.length; i++) {
+                    var coords = results.features[i].geometry.coordinates; //Get coordinates
+                    //Note: the latitude and longitude order of LatLng object is opposite to the coordinate order of GEOJSON
+                    var latLng = new google.maps.LatLng(coords[0][0][1], coords[0][0][0]);
+                    var weightedLoc = {
+                        location: latLng,
+                        weight: results.features[i].properties.ELEV //Get the weight
+                    };
+                    heatmapData.push(weightedLoc);//Add data to the heatmapData array
+                }
+
+                //Generate heat map layer
+                var heatmap = new google.maps.visualization.HeatmapLayer({
+                    data: heatmapData,//This is the heat map data
+                    dissipating: true,
+                    map: map,
+                    radius: 40,
+                    gradient: ['transparent', '#00f', '#0f0', '#f00']//Specify color range: transparent, blue, green, red
+                });
+                heatmap.setMap(map);//Add heatmap layer to map
+            }
+        }
+    </script>
+</body>
+</html>

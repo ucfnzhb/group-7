@@ -1,0 +1,197 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Geolocation</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+        /*Set height*/
+        #map {
+            height: 100%;
+        }
+        /*Set height and margin*/
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+     /*This is the section of legend*/
+        .pan1 {
+            width: 270px;
+            height: 120px;
+            position: absolute;/*The position*/
+            top: 100px;
+            left: 0px;
+            background-color: azure;
+            z-index: 999;
+            padding: 30px;
+        }
+
+            .pan1 span {
+                display: inline-block;
+                line-height: 20px;
+            }
+
+        .pan2 {
+            width: 400px;
+            height: 50%;
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            background-color: azure;
+            z-index: 999;
+        }
+
+        body {
+            position: relative;
+        }
+
+        #top {
+            height: 100%;
+            background-color: #ff0000;
+        }
+
+    </style>
+</head>
+<body>
+    <!--It is cited from jquery and highchart libraries-->
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://code.highcharts.com.cn/highcharts/highcharts.js"></script>
+
+    <!--Legend-->
+    <div class="pan1">
+        <img src="images/1.png" alt="Alternate Text" /><span>Coffee Shop</span>
+        <br />
+        <img src="images/2.png" alt="Alternate Text" /><span>Fast Food Shop</span>
+        <br />
+        <img src="images/3.png" alt="Alternate Text" /><span>Fish and Chip Shop</span>
+        <br />
+        <img src="images/4.png" alt="Alternate Text" /><span>Bar</span>
+        <br />
+        <img src="images/5.png" alt="Alternate Text" /><span>Restaurant</span>
+    </div>
+
+    <!--Pie chart-->
+    <div class="pan2">
+        <div id="top"></div>
+    </div>
+
+    <!--Map-->
+    <div id="map"></div>
+    <script>
+
+        var map, infoWindow;//Define variables
+        function initMap() {
+            //Initialize the map
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 51.50, lng: 0.01 },//This is the default location
+                zoom: 12
+            });
+            infoWindow = new google.maps.InfoWindow;//This is the information window
+            var marker = [];//It is all the dots
+            $.getJSON("data.json", function (csv) {
+                var num1 = 0;/*This is the number of coffee shops represented by the first type of dot*/
+                var num2 = 0;/*This is the number of fast food shops represented by the second type of dot*/
+                var num3 = 0;/*This is the number of fish and chip shops represented by the third type of dot*/
+                var num4 = 0;/*This is the number of bar represented by the fourth type of dot*/
+                var num5 = 0;/*This is the number of restaurant represented by the fifth type of dot*/
+
+                for (var i = 0; i < csv.length; i++) {
+                    var image;
+                    if (csv[i].Category == "Coffee Shop") {
+                        image = "images/1.png";//This is a picture of dots representing the coffee shop
+                        num1++;
+                    } else if (csv[i].Category == "Fast Food Shop"){
+                        image = "images/2.png";//This is a picture of dots representing the fast food shop
+                        num2++;
+                    }
+                    else if (csv[i].Category == "Fish and Chip Shop") {
+                        image = "images/3.png";//This is a picture of dots representing the fish and chip shop
+                        num3++;
+                    }
+                    else if (csv[i].Category == "Bar") {
+                        image = "images/4.png";//This is a picture of dots representing the bar
+                        num4++;
+                    }
+                    else if (csv[i].Category == "Restaurant") {
+                        image = "images/5.png";//This is a picture of dots representing the restaurant
+                        num5++;
+                    }
+                    //Initialize every point
+                    marker[i] = new google.maps.Marker({
+                        position: { lat: Number(csv[i].Latitude), lng: Number(csv[i].Longitude) },//This is the location of the point
+                        map: map,
+                        icon: image,
+                        iconSize: 2
+                    });
+                    //Click on a dot and a window will display its corresponding information, including name, address and postcode
+                    marker[i].info = new google.maps.InfoWindow({
+                        content: '<p>' + csv[i].Name + "<br>" + csv[i].Address + "<br>" + csv[i].Postcode + '</p>'
+                    });
+
+                    //Set as long as user click a dot, the information window and information content corresponding to this dot will be displayed on the map
+                    google.maps.event.addListener(marker[i], 'click', function () {
+                        this.info.open(map, this);
+                    });
+                }
+
+                //Draw a pie chart with hightchart
+                Highcharts.chart('top', {
+                    chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false,
+                        type: 'pie'
+                    },
+                    title: {
+                        text: 'Comparison of different types of catering shops'/*This is the title of pie chart*/
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: true,
+                                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                style: {
+                                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                }
+                            }
+                        }
+                    },
+                    series: [{
+                        name: 'Brands',
+                        colorByPoint: true,
+                        data: [
+                            {
+                                name: 'Coffee Shop',/*This is the first type of catering shop, coffee shop*/
+                                y: num1,
+                            },
+                            {
+                                name: 'Fast Food Shop',/*This is the second type of catering shop, fast food shop*/
+                                y: num2
+                            },
+                            {
+                                name: 'Fish and Chip Shop',/*This is the third type of catering shop, fish and chip shop*/
+                                y: num3
+                            },
+                            {
+                                name: 'Bar',/*This is the fourth type of catering shop, bar*/
+                                y: num4
+                            },
+                            {
+                                name: 'Restaurant',/*This is the fifth type of catering shop, restaurant*/
+                                y: num5
+                            }
+                        ]
+                    }]
+                });
+            });
+        }
+    </script>
+
+    <!--This is cited from Google Maps Platform, the link: https://developers.google.com/maps/documentation/javascript/get-api-key-->
+    <!--Get an API Key-->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJW4jsPlNKgv6jFm3B5Edp5ywgdqLWdmc&sensor=false&language=en&callback=initMap"></script>
+</body>
+</html>
