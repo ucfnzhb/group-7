@@ -10,14 +10,26 @@
 <style>
 	body { margin: 0; padding: 0; }
 	
+<html>
+<head>    
+<meta charset="utf-8" />
+<title>Create and style clusters</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.js"></script>
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css" rel="stylesheet" />
+<style>
+	body { margin: 0; padding: 0; }
+	
 </style>
 </head>
 <body>
 <div id="map" style="position: absolute; top:0; bottom: 0; width: 100%"></div>
-<div id="ea" style="width:21%; height:24%; margin: 5; opacity:0.8 "></div>
-<div id="sa" style=" width:21%; height:24%; margin: 5; opacity:0.8 "></div>
-<div id="eu" style=" width:21%; height:24%; margin: 5; opacity:0.8 "></div>
-<div id="mix" style="width:21%; height:24%; margin: 5; opacity:0.8 "></div>
+<div id="ea" style="position: absolute; top:0px;width:21%; height:24%; margin: 5; opacity:0.8 "></div>
+<div id="sa" style=" position: absolute; top: 160px;width:21%; height:24%; margin: 5; opacity:0.8 "></div>
+<div id="eu" style=" position: absolute; top: 320px; width:21%; height:24%; margin: 5; opacity:0.8 "></div>
+<div id="mix" style="position: absolute; top: 480px; width:21%; height:24%; margin: 5; opacity:0.8 "></div>
 <div id="show" style="position: absolute;top:0; width:25%; height:48%; margin: 5; opacity:0.8; margin-left: 74.7%"></div>
 <div id="rank" style="position: absolute;top:50%; width:25%; height:48%; margin: 5; opacity:0.8; margin-left: 74.7%"></div>  
 <script>
