@@ -1,4 +1,3 @@
-# group-7
 <html>
 <head>    
 <meta charset="utf-8" />
@@ -15,13 +14,12 @@
 </head>
 <body>
 <div id="map" style="position: absolute; top:0; bottom: 0; width: 100%"></div>
-<div id="ea" style="  width:21%; height:24%; margin: 5; opacity:0.8 "></div>
-<div id="sa" style="top=25%;width:21%; height:24%; margin: 5; opacity:0.8 "></div>
+<div id="ea" style="width:21%; height:24%; margin: 5; opacity:0.8 "></div>
+<div id="sa" style=" width:21%; height:24%; margin: 5; opacity:0.8 "></div>
 <div id="eu" style=" width:21%; height:24%; margin: 5; opacity:0.8 "></div>
 <div id="mix" style="width:21%; height:24%; margin: 5; opacity:0.8 "></div>
 <div id="show" style="position: absolute;top:0; width:25%; height:48%; margin: 5; opacity:0.8; margin-left: 74.7%"></div>
 <div id="rank" style="position: absolute;top:50%; width:25%; height:48%; margin: 5; opacity:0.8; margin-left: 74.7%"></div>  
-
 <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoiamFuZXhpenp6enoiLCJhIjoiY2s5d3k2eWd1MDlxbDNpcDNhOWVwYm5hOSJ9.-bRRt6ezlyK0YcqlD5epMg';
     //get the map backgrount
@@ -51,35 +49,52 @@
             // This is only for the classification of restaurants with a country type. For example, a seafood restaurant that does not indicate the country is not counted. 
             for(var  i=res.features.length-1; i>0;i--){
                 var obj = res.features[i].properties;
-                var asia = ["Chinese Restaurant","Thai Restaurant","Japanese Restaurant","Korean Restaurant"];
+                
+                // Thailand is strictly a Southeast Asian restaurant, but for the convenience of classification, it is classified as an East Asian restaurant.
+                
+                var asia = ["Chinese Restaurant","Thai Restaurant","Japanese Restaurant","Korean Restaurant"];// get the element we want
+             
                 if (!asia.includes(obj['qualifier_data'])){ // match the data from the data source
                     res.features.splice(i,1); // remove the extraneous variable
                 }
             }
             console.log(res) // check the data 
-	  for(var  i=sa.features.length-1; i>0;i--){
+            
+             for(var  i=sa.features.length-1; i>0;i--){
                 var South_Asia = ['Indian Restaurant','Nepalese Restaurant','Turkish Restaurant'];
                  var obj = sa.features[i].properties;
+                
                  if (!South_Asia.includes(obj['qualifier_data'])  ){
                     sa.features.splice(i,1);
                 }
             }console.log(sa) 
+            
+            
             for(var  i=mix.features.length-1; i>0;i--){
                 var amer =['Mexican Restaurant','Lebanese Restaurant'];
                  var obj = mix.features[i].properties;
+                
                  if (!amer.includes(obj['qualifier_data'])  ){
                     mix.features.splice(i,1);
                 }
             }console.log(mix)
+            
             for(var  i=eu.features.length-1; i>0;i--){
                 // Among them, pizza was invented in Italy, so it was classified as an Italian restaurant. At the same time, because the study place is located in the United Kingdom, the point which does not clearly indicate which country's restaurant classification is defaulted to belong to the EU. on the other hand, The Mediterranean Sea does not belong to any continent. It is the dividing line between Europe and Africa. There is no African-style restaurant here, so it is classified as the EU.
+                
                 var eup = ['English Restaurant','Greek Restaurant','Mediterranean Restaurant','French Restaurant','Pizza Restaurant','Restaurant'];
                  var obj = eu.features[i].properties;
+                
                  if (!eup.includes(obj['qualifier_data'])  ){
                     eu.features.splice(i,1);
                 }
             }console.log(eu)
+       
+
+   
         map.on('load', function() {
+            
+        
         // east asian restaurant cluster   
         map.addSource('restaurant', {
             'type': 'geojson',
@@ -88,6 +103,8 @@
             clusterMaxZoom: 14, // Max zoom to cluster points on
             clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
         });    
+         
+       
         map.addLayer({
             id: 'clusters_ea',
             type: 'circle',
@@ -96,6 +113,8 @@
             paint: {     
                 'circle-color':'#FFFF00',
                 'circle-opacity': 0.5,// the poacity of the point
+
+
                 'circle-radius': [
                     'step',
                     ['get', 'point_count'],//different numbers of restaurants inside the cluster will be shown as different redius.
@@ -106,8 +125,10 @@
                     35
                     ]
                 },
+           
             }); 
-	  map.addLayer({
+            
+        map.addLayer({
             id: 'cluster-count_ea',
             type: 'symbol',
             source: 'restaurant',
@@ -118,6 +139,7 @@
                 'text-size': 12
             },
                 });
+            
         // south asian restaurant cluster    
         map.addSource('sa', {
             'type': 'geojson',
@@ -126,6 +148,8 @@
             clusterMaxZoom: 14, // Max zoom to cluster points on
             clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
         });    
+         
+       
         map.addLayer({
             id: 'clusters_sa',
             type: 'circle',
@@ -134,6 +158,7 @@
             paint: {     
                 'circle-color':'#FFB6C1',// get the cluster piont color
                 'circle-opacity': 0.5,// the poacity of the point
+
                 'circle-radius': [
                     'step',
                     ['get', 'point_count'],//different numbers of restaurants inside the cluster will be shown as different redius.
@@ -143,8 +168,10 @@
                     20,
                     35
                     ]
-                }
-            });        
+                },
+           
+            }); 
+            
         map.addLayer({
             id: 'cluster-count_sa',
             type: 'symbol',
@@ -156,6 +183,8 @@
                 'text-size': 12
             },
                 });
+            
+          
        // the cluster of other mixed restaurants  
         map.addSource('mix', {
             'type': 'geojson',
@@ -164,6 +193,7 @@
             clusterMaxZoom: 14, // Max zoom to cluster points on
             clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
         });    
+    
         map.addLayer({
             id: 'clusters_mix',
             type: 'circle',
@@ -172,6 +202,8 @@
             paint: {     
                 'circle-color':'#7B68EE',
                 'circle-opacity': 0.5,// the poacity of the point
+
+
                 'circle-radius': [
                     'step',
                     ['get', 'point_count'],//different numbers of restaurants inside the cluster will be shown as different redius.
@@ -182,7 +214,9 @@
                     35
                     ]
                 },
+           
             }); 
+            
         map.addLayer({
             id: 'cluster-count_mix',
             type: 'symbol',
@@ -194,6 +228,7 @@
                 'text-size': 12
             },
                 });
+            
         // the cluster of eu reataurants    
         map.addSource('eu', {
             'type': 'geojson',
@@ -202,6 +237,8 @@
             clusterMaxZoom: 14, 
             clusterRadius: 50 
         });        
+                    
+        
         map.addLayer({
             id: 'clusters_eu',
             type: 'circle',
@@ -210,6 +247,7 @@
             paint: {     
                 'circle-color':'#7FFFD4',
                 'circle-opacity': 0.5,
+
                 'circle-radius': [
                     'step',
                     ['get', 'point_count'],
@@ -557,7 +595,8 @@
    $('#container').highcharts(json);
   
 });
-	//rank chart
+
+    //rank chart
     $(document).ready(function() {  
        var chart = {
           type: 'bar'
