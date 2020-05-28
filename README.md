@@ -1,7 +1,7 @@
 <html>
 <head>    
 <meta charset="utf-8" />
-<title>Create and style clusters</title>
+<title>Cluster analysis</title>
 <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
 <script src="https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.js"></script>
 <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
@@ -26,22 +26,26 @@
 </head>
 <body>
 <div id="map" style="position: absolute; top:0; bottom: 0; width: 100%"></div>
-<div id="ea" style="position: absolute; top:0px;width:21%; height:24%; margin: 5; opacity:0.8 "></div>
-<div id="sa" style=" position: absolute; top: 160px;width:21%; height:24%; margin: 5; opacity:0.8 "></div>
-<div id="eu" style=" position: absolute; top: 320px; width:21%; height:24%; margin: 5; opacity:0.8 "></div>
-<div id="mix" style="position: absolute; top: 480px; width:21%; height:24%; margin: 5; opacity:0.8 "></div>
+<div id="ea" style="position: absolute; top:0px;width: 290px; height: 155px; margin: 5; opacity:0.8 "></div>
+<div id="sa" style=" position: absolute; top: 160px;width: 290px; height:155px; margin: 5; opacity:0.8 "></div>
+<div id="eu" style=" position: absolute; top: 320px; width: 290px; height: 155px; margin: 5; opacity:0.8 "></div>
+<div id="mix" style="position: absolute; top: 480px; width: 290px; height: 155px; margin: 5; opacity:0.8 "></div>
 <div id="show" style="position: absolute;top:0; width:25%; height:48%; margin: 5; opacity:0.8; margin-left: 74.7%"></div>
 <div id="rank" style="position: absolute;top:50%; width:25%; height:48%; margin: 5; opacity:0.8; margin-left: 74.7%"></div>  
+
 <script>
-    mapboxgl.accessToken = 'pk.eyJ1IjoiamFuZXhpenp6enoiLCJhIjoiY2s5d3k2eWd1MDlxbDNpcDNhOWVwYm5hOSJ9.-bRRt6ezlyK0YcqlD5epMg';
+   
+   mapboxgl.accessToken = 'pk.eyJ1IjoiamFuZXhpenp6enoiLCJhIjoiY2s5d3k2eWd1MDlxbDNpcDNhOWVwYm5hOSJ9.-bRRt6ezlyK0YcqlD5epMg';
     //get the map backgrount
     // add the background map
-     var map = new mapboxgl.Map({
+    
+    var map = new mapboxgl.Map({
         container: 'map', //call back the map div
         style: 'mapbox://styles/mapbox/light-v10',//get the map style
         center: [-3.192311, 55.94926],//get the center point
         zoom: 12.5 //define the zoom size
     });
+    
     let xhr = new XMLHttpRequest(); // call the data (geojson file)
     xhr.open('GET', './resgeo.geojson');
     xhr.responseType = 'json';
