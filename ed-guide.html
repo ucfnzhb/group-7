@@ -1,0 +1,373 @@
+
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Highlight features containing similar data</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css" rel="stylesheet" />
+<style>
+	body { margin: 0; padding: 0; overflow: hidden;}
+	#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<style>
+    .map-overlay {
+        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        background-color: #fff;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        border-radius: 3px;
+        position: absolute;
+        width: 25%;
+        top: 10px;
+        left: 10px;
+        padding: 10px;
+        display: none;
+    }
+</style>
+<style>
+    .filter-group {
+        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        font-weight: 600;
+        position: absolute;
+        top: 30px;
+        right: 10px;
+        z-index: 1;
+        border-radius: 3px;
+        width: 180px;
+        color: #fff;
+        bottom: 30px;
+        height: calc(100% - 60px);
+        overflow-y: auto;
+    }
+
+    .filter-group input[type='checkbox']:first-child + label {
+        border-radius: 3px 3px 0 0;
+    }
+
+    .filter-group label:last-child {
+        border-radius: 0 0 3px 3px;
+        border: none;
+    }
+
+    .filter-group input[type='checkbox'] {
+        display: none;
+    }
+
+    .filter-group input[type='checkbox'] + label {
+        background-color: #3386c0;
+        display: block;
+        cursor: pointer;
+        padding: 10px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    }
+
+    .filter-group input[type='checkbox'] + label {
+        background-color: #3386c0;
+        text-transform: capitalize;
+    }
+
+    .filter-group input[type='checkbox'] + label:hover,
+    .filter-group input[type='checkbox']:checked + label {
+        background-color: #4ea0da;
+    }
+
+    .filter-group input[type='checkbox']:checked + label:after {
+        content: '✔';
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+    
+    
+    </style>
+
+<div id="map"></div>
+<div id="map-overlay" class="map-overlay"></div>
+<nav id="filter-group" class="filter-group"></nav>
+
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoiamFuZXhpenp6enoiLCJhIjoiY2s5d3k2eWd1MDlxbDNpcDNhOWVwYm5hOSJ9.-bRRt6ezlyK0YcqlD5epMg';
+    //get the map backgrount
+    //添加地图，确定中心点
+     var map = new mapboxgl.Map({
+        container: 'map', //call back the map div
+        style: 'mapbox://styles/mapbox/light-v10',//get the map style
+        center: [-3.192311, 55.94926],//get the center point
+        zoom: 12.5 //define the zoom size
+    });
+    
+    
+    //call back the css
+    //把css里的数据传进来
+    var overlay = document.getElementById('map-overlay');//call back the div
+    var filterGroup = document.getElementById('filter-group');
+
+    // Create a popup, but don't add it to the map yet.
+    //为了鼠标移动加的，传数据
+    var popup = new mapboxgl.Popup({
+        closeButton: false
+    });
+    
+    //get the geojson data 
+    //把geojson文件传进来
+    
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', './resgeo.geojson');
+    xhr.responseType = 'json';
+    var onError =function (){ }
+    xhr.onerror=onError;
+      xhr.send();
+    
+    // delete the null value
+    //删除餐馆类型为空的数据
+    xhr.onload = function() {
+        if (xhr.status==200){
+            let res = xhr.response;
+            for(var  i=res.features.length-1; i>0;i--){
+                var obj = res.features[i].properties;
+                if (!obj['qualifier_data']){
+                    res.features.splice(i,1);
+                }
+                    }
+     var size = 80
+    var pulsingDot = {
+            width: size,
+            height: size,
+            data: new Uint8Array(size * size * 4),
+            // get rendering context for the map canvas when layer is added to the map
+            onAdd: function() {
+                var canvas = document.createElement('canvas');
+                canvas.width = this.width;
+                canvas.height = this.height;
+                this.context = canvas.getContext('2d');
+            },
+
+        // called once before every frame where the icon will be used
+            render: function() {
+                var duration = 1000; //duration time
+                var t = (performance.now() % duration) / duration;
+
+                var radius = (size / 2) * 0.3;
+                var outerRadius = (size / 2) * 0.7 * t + radius;
+                var context = this.context;
+
+            // draw outer circle
+                context.clearRect(0, 0, this.width, this.height);
+                context.beginPath();
+                context.arc(
+                    this.width / 2,
+                    this.height / 2,
+                    outerRadius,
+                    0,
+                    Math.PI * 2
+                );
+                context.fillStyle = 'rgba(218,165,32,' + (1 - t) + ')';
+                context.fill();
+
+            // draw inner circle
+                context.beginPath();
+                context.arc(
+                    this.width / 2,
+                    this.height / 2,
+                    radius,
+                    0,
+                    Math.PI * 2
+                );
+                context.fillStyle = 'rgba(255,215,0, 1)';
+                context.strokeStyle = '#FFFF00';
+                context.lineWidth = 2 + 4 * (1 - t);
+                context.fill();
+                context.stroke();
+
+            // update this image's data with data from the canvas
+                this.data = context.getImageData(
+                    0,
+                    0,
+                    this.width,
+                    this.height
+                ).data;
+
+            // continuously repaint the map, resulting in the smooth animation of the dot
+                map.triggerRepaint();
+
+            // return `true` to let the map know that the image was updated
+                return true;
+            }
+        };
+            
+   
+                
+    //create the map 
+    map.on('load', function() {
+        map.addSource('restaurant', {
+            'type': 'geojson',
+            'data': res
+        });
+        
+        
+        //Here is a function that will display the data after the mouse moves, first make the background layer
+        map.addLayer(
+            {
+                'id': 'restaurant',
+                'type': 'circle',
+                'source': 'restaurant',
+                'paint': {
+                    'circle-radius': 7,
+                    'circle-color': '#008B8B',
+                    'circle-stroke-color': 'white',
+                    'circle-stroke-width': 1,
+                    'circle-opacity': 0.5
+                    
+                },
+            },
+            'settlement-label'
+        ); 
+        
+        //当被选择后的值
+
+        map.addLayer(
+            {
+                'id': 'restaurant-highlighted',
+                'type': 'circle',
+                'source': 'restaurant',
+                'paint': {
+                    
+                    'circle-radius': 12,
+                    'circle-color': '#6e599f',
+                    'circle-stroke-color': 'white',
+                    'circle-stroke-width': 5,
+                    'circle-opacity': 0.8
+                   
+                },
+                'filter': ['in', 'qualifier_data', '']
+            },
+            'settlement-label'
+        ); // Place polygon under these labels.
+        
+        //鼠标移到该位置上的时候所显示的样例
+
+        map.on('mousemove', 'restaurant', function(e) {
+            // Change the cursor style as a UI indicator.
+            map.getCanvas().style.cursor = 'pointer';
+
+            // Single out the first found feature.
+            var feature = e.features[0];
+
+            // filter the data and  param to only collect results that are the same reataurants type
+            var relatedFeatures = map.querySourceFeatures('restaurant', {
+                filter: ['in', 'qualifier_data', feature.properties.qualifier_data]
+            });
+
+            // Render found features in an overlay.
+            overlay.innerHTML = '';
+            
+
+            // Total the population of all features
+            var populationSum = relatedFeatures.reduce(function(memo, feature) {
+                return memo + feature.properties.name;
+            }, 0);
+            
+            //Bubbles displayed when the mouse is placed: restaurant type
+
+            var res_name = document.createElement('strong');
+                res_name.textContent =
+                    feature.properties.name ;
+            
+            
+            //The specific data displayed on the upper right: the restaurant name under the restaurant type
+            
+            var postcode = document.createElement('div');
+                postcode.textContent =
+                  ' Postcode:   ' + feature.properties.postcode 
+            var phone_num = document.createElement('div');
+                phone_num.textContent =
+                    '   Phone number:   ' + feature.properties.telephone_number;
+
+            // call back the div     
+            overlay.appendChild(res_name);
+            overlay.appendChild(postcode);
+            overlay.appendChild(phone_num);
+            overlay.style.display = 'block';
+
+            // Add features that has the same reastaurant types and will show in the map 
+            map.setFilter('restaurant-highlighted', [
+                'in',
+                'qualifier_data', 
+                feature.properties.qualifier_data
+            ]);
+
+            // Display a popup with the name of the county
+            popup
+                .setLngLat(e.lngLat)
+                .setText(feature.properties.qualifier_data )
+                .addTo(map);
+        });
+        
+        //when the mouse leave, shows nothing
+        map.on('mouseleave', 'restaurant', function() {
+            
+            map.getCanvas().style.cursor = '';
+            popup.remove();
+            map.setFilter('restaurant-highlighted', ['in', 'qualifier_data ', '']);
+            overlay.style.display = 'none';
+        });
+        
+        
+        //make the manue, get the specific type of restaurants
+        res.features.forEach(function(feature) {
+            var symbol = feature.properties['qualifier_data'];
+            var layerID =  'poi-'+ symbol;
+            
+
+            // Add a layer for this symbol type if it hasn't been added already.
+            if (!map.getLayer(layerID)) {
+                map.addImage('resget', pulsingDot, { pixelRatio: 2 });
+                map.addLayer({
+                    'id': layerID,
+                    'type': 'symbol',
+                    'source': 'restaurant',
+            
+                    'layout':{
+                        'visibility':'none',
+                        'icon-image': 'resget',
+                    },
+                    
+                    'filter': ['==', 'qualifier_data', symbol] // call bcak the chect box data
+                });
+
+                // Add checkbox and label elements for the layer.
+                var input = document.createElement('input');
+                input.type = 'checkbox';
+                input.id = layerID;
+                input.checked = false;
+                filterGroup.appendChild(input);
+
+                var label = document.createElement('label');
+                label.setAttribute('for', layerID);
+                label.textContent = symbol;
+                filterGroup.appendChild(label);
+
+                // When the checkbox changes, update the visibility of the layer.
+                input.addEventListener('change', function(e) {
+                    map.setLayoutProperty(
+                        layerID,
+                        'visibility',
+                        e.target.checked ? 'visible' : 'none'
+                    );
+                });
+            }
+        });
+    });
+             } else{                   
+                    onError();               
+                }       
+            };
+    
+             
+        
+
+</script>
+
+</body>
+</html>
